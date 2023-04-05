@@ -31,6 +31,7 @@ app.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../public/', 'index.html'));
 });
 
+
 // Default 404 handler
 app.use((req, res) => {
   console.log(`server/app.js: handler not found for request ${req.method} ${req.url}`);

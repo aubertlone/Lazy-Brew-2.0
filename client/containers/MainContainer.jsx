@@ -83,7 +83,7 @@ const MainContainer = () => {
           }
         ],
         "resultsStartingIndex": 0,
-        "resultsSize": 200,
+        "resultsSize": 50,
         "sort": "REVIEW",
         "filters": {
           "price": {
@@ -99,7 +99,7 @@ const MainContainer = () => {
     axios.request(optionsProperties)
       .then((response) => {
         let propertiesResult = response.data.data.propertySearch.properties
-        console.log(propertiesResult)
+        
         return propertiesResult
       })
       .then((apiHotelList) => {
@@ -108,29 +108,23 @@ const MainContainer = () => {
         for (let i = 0; i < apiHotelList.length; i++) {
           const optionsBreweries = {
             method: 'GET',
-            url: `https://api.openbrewerydb.org/breweries?by_dist=${apiHotelList[i].coordinate.lat},${apiHotelList[i].coordinate.lon}&per_page=10`,
+            // url: `https://api.openbrewerydb.org/breweries?by_dist=${apiHotelList[i].coordinate.lat},${apiHotelList[i].coordinate.lon}&per_page=10`,
+            url: `https://api.openbrewerydb.org/v1/breweries?by_dist=${apiHotelList[i].mapMarker.latLong.latitude},${apiHotelList[i].mapMarker.latLong.longitude}&per_page=10`
+            
           }
+          console.log(optionsBreweries)
           let oneProperty = apiHotelList[i]
+
+
+          // n
+
           //based on hotel longitude/latitude, fetch request for breweries within 2 miles radius
-          axios.request(optionsBreweries)
-            .then((beerResponse) => {
-              const breweryArray = []
-              for (let j = 0; j < beerResponse.data.length; j++) {
-                let distanceFromHotel = geodist({ lat: oneProperty.coordinate.lat, lon: oneProperty.coordinate.lon }, { lat: beerResponse.data[j].latitude, lon: beerResponse.data[j].longitude })
-                if (distanceFromHotel > 2) {
-                  break
-                }
-                // beerResponse.data['showHotel'] = true
-                breweryArray.push(beerResponse.data[j])
-                // console.log(beerResponse, 'beerResponse')
-              }
-              oneProperty.breweryList = breweryArray
-              //use the number of number of breweries to sort hotel order by most breweries in the vacinity
-              oneProperty.breweryListLength = breweryArray.length
-              finalHotelData.push(oneProperty)
-              setHotelList(current => [...current, oneProperty])
-            })
+
+          // at this point, we have a large array called optionsBreweries
+          // each index location inside optionsBreweries contains a brewery object of the 10 closest breweries to the hotel
+
         }
+      
         return finalHotelData.length
       })
       .then((finalData) => {
@@ -156,7 +150,7 @@ const MainContainer = () => {
   //   return Navigate('/signup')
   // }
 
-  console.log("Is state persisting? User ID is ", userId, "username is ", userName);
+
 
   let Greeting = (
     <div className='greeting'></div>

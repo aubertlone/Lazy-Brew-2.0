@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --verbose",
-    "start": "nodemon ./last.js",
+    "start": "NODE_ENV=development webpack serve --open",
     "build": "NODE_ENV=production webpack",
     "watch": "webpack --watch",
     "dev": "nodemon ./123.js",
