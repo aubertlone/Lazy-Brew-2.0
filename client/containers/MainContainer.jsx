@@ -1,3 +1,4 @@
+
 import React, { useState, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Button } from '@mui/material';
@@ -167,6 +168,7 @@ const MainContainer = () => {
     </div >
   )
 
+// option Id's are gaiaId's from frapidapi locations/v3/search.
 
 return (
   <div>
@@ -179,11 +181,17 @@ return (
           <label>Select Destination</label>/
           <select onChange={(e) => setCity(e.target.value)}>
             <option value="" disabled selected>Select Your City</option>
-            <option value={'1506246'}>New York</option>
-            <option value={'1439028'}>Los Angeles</option>
-            <option value={'1493604'}>San Francisco</option>
-            <option value={'1633050'}>Honolulu</option>
-            <option value={'780'}>Denver</option>
+            
+            <option value={'2323'}>Kansas City</option>
+            <option value={'2011'}>Los Angeles</option>
+            <option value={'3132'}>San Francisco</option>
+            <option value={'1488'}>Honolulu</option>
+            <option value={'996'}>Denver</option>
+            <option value={'7086'}>St. Louis</option>
+            <option value={'3200'}>Salt Lake City</option>
+            <option value={'3763'}>Washington D.C</option>
+            <option value={'3121'}>Seattle</option>
+            <option value={'1503'}>Houston</option>
 
 
           </select>
@@ -226,7 +234,6 @@ return (
     />}
     {/* </div>
           </div>
-
           </div> */}
 
 
