@@ -49,24 +49,48 @@ const MainContainer = () => {
     let checkOut = checkOutDate.split("/").reverse().join("-")
 
     const optionsProperties = {
-      method: 'GET',
-      url: 'https://hotels4.p.rapidapi.com/properties/list',
-      params: {
-        destinationId: selectedCity,
-        pageNumber: '1',
-        pageSize: hotelResultNumber,
-        checkIn: checkIn,
-        checkOut: checkOut,
-        adults1: '1',
-        sortOrder: 'starRatings',
-        locale: 'en_US',
-        currency: 'USD'
-      },
+      method: 'POST',
+      url: 'https://hotels4.p.rapidapi.com/properties/v2/list',
       headers: {
-        //have to reapply for the API key when fetch no longer works: https://rapidapi.com/apidojo/api/hotels4
-        //example: AXIOS error code
-        'X-RapidAPI-Key': 'a3d20fff95mshf7a26c3d8f9e65cp1b474bjsn3fd4a5e652e7',
+        'content-type': 'application/json',
+        'X-RapidAPI-Key': '2a3c3d1c3emsh266f4f3063e58bap18d7dbjsnbe5ea03be3c6',
         'X-RapidAPI-Host': 'hotels4.p.rapidapi.com'
+      },
+      data: {
+        "currency": "USD",
+        "eapid": 1,
+        "locale": "en_US",
+        "siteId": 300000001,
+        "destination": {
+          "regionId": selectedCity
+        },
+        "checkInDate": {
+          "day": 1,
+          "month": 5,
+          "year": 2023
+        },
+        "checkOutDate": {
+          "day": 15,
+          "month": 5,
+          "year": 2023
+        },
+        "rooms": [
+          {
+            "adults": 2,
+            "children": [
+              {}
+            ]
+          }
+        ],
+        "resultsStartingIndex": 0,
+        "resultsSize": 200,
+        "sort": "REVIEW",
+        "filters": {
+          "price": {
+            "max": 350,
+            "min": 100
+          }
+        }
       }
     };
     setIsLoading(false)
@@ -74,7 +98,8 @@ const MainContainer = () => {
 
     axios.request(optionsProperties)
       .then((response) => {
-        let propertiesResult = response.data.data.body.searchResults.results
+        let propertiesResult = response.data.data.propertySearch.properties
+        console.log(propertiesResult)
         return propertiesResult
       })
       .then((apiHotelList) => {
