@@ -49,24 +49,48 @@ const MainContainer = () => {
     let checkOut = checkOutDate.split("/").reverse().join("-")
 
     const optionsProperties = {
-      method: 'GET',
-      url: 'https://hotels4.p.rapidapi.com/properties/list',
-      params: {
-        destinationId: selectedCity,
-        pageNumber: '1',
-        pageSize: hotelResultNumber,
-        checkIn: checkIn,
-        checkOut: checkOut,
-        adults1: '1',
-        sortOrder: 'starRatings',
-        locale: 'en_US',
-        currency: 'USD'
-      },
+      method: 'POST',
+      url: 'https://hotels4.p.rapidapi.com/properties/v2/list',
       headers: {
-        //have to reapply for the API key when fetch no longer works: https://rapidapi.com/apidojo/api/hotels4
-        //example: AXIOS error code
-        'X-RapidAPI-Key': 'a3d20fff95mshf7a26c3d8f9e65cp1b474bjsn3fd4a5e652e7',
+        'content-type': 'application/json',
+        'X-RapidAPI-Key': '2a3c3d1c3emsh266f4f3063e58bap18d7dbjsnbe5ea03be3c6',
         'X-RapidAPI-Host': 'hotels4.p.rapidapi.com'
+      },
+      data: {
+        "currency": "USD",
+        "eapid": 1,
+        "locale": "en_US",
+        "siteId": 300000001,
+        "destination": {
+          "regionId": selectedCity
+        },
+        "checkInDate": {
+          "day": 1,
+          "month": 5,
+          "year": 2023
+        },
+        "checkOutDate": {
+          "day": 15,
+          "month": 5,
+          "year": 2023
+        },
+        "rooms": [
+          {
+            "adults": 2,
+            "children": [
+              {}
+            ]
+          }
+        ],
+        "resultsStartingIndex": 0,
+        "resultsSize": 50,
+        "sort": "REVIEW",
+        "filters": {
+          "price": {
+            "max": 350,
+            "min": 100
+          }
+        }
       }
     };
     setIsLoading(false)
@@ -74,7 +98,8 @@ const MainContainer = () => {
 
     axios.request(optionsProperties)
       .then((response) => {
-        let propertiesResult = response.data.data.body.searchResults.results
+        let propertiesResult = response.data.data.propertySearch.properties
+        
         return propertiesResult
       })
       .then((apiHotelList) => {
@@ -83,29 +108,23 @@ const MainContainer = () => {
         for (let i = 0; i < apiHotelList.length; i++) {
           const optionsBreweries = {
             method: 'GET',
-            url: `https://api.openbrewerydb.org/breweries?by_dist=${apiHotelList[i].coordinate.lat},${apiHotelList[i].coordinate.lon}&per_page=10`,
+            // url: `https://api.openbrewerydb.org/breweries?by_dist=${apiHotelList[i].coordinate.lat},${apiHotelList[i].coordinate.lon}&per_page=10`,
+            url: `https://api.openbrewerydb.org/v1/breweries?by_dist=${apiHotelList[i].mapMarker.latLong.latitude},${apiHotelList[i].mapMarker.latLong.longitude}&per_page=10`
+            
           }
+          console.log(optionsBreweries)
           let oneProperty = apiHotelList[i]
+
+
+          // n
+
           //based on hotel longitude/latitude, fetch request for breweries within 2 miles radius
-          axios.request(optionsBreweries)
-            .then((beerResponse) => {
-              const breweryArray = []
-              for (let j = 0; j < beerResponse.data.length; j++) {
-                let distanceFromHotel = geodist({ lat: oneProperty.coordinate.lat, lon: oneProperty.coordinate.lon }, { lat: beerResponse.data[j].latitude, lon: beerResponse.data[j].longitude })
-                if (distanceFromHotel > 2) {
-                  break
-                }
-                // beerResponse.data['showHotel'] = true
-                breweryArray.push(beerResponse.data[j])
-                // console.log(beerResponse, 'beerResponse')
-              }
-              oneProperty.breweryList = breweryArray
-              //use the number of number of breweries to sort hotel order by most breweries in the vacinity
-              oneProperty.breweryListLength = breweryArray.length
-              finalHotelData.push(oneProperty)
-              setHotelList(current => [...current, oneProperty])
-            })
+
+          // at this point, we have a large array called optionsBreweries
+          // each index location inside optionsBreweries contains a brewery object of the 10 closest breweries to the hotel
+
         }
+      
         return finalHotelData.length
       })
       .then((finalData) => {
@@ -131,7 +150,7 @@ const MainContainer = () => {
   //   return Navigate('/signup')
   // }
 
-  console.log("Is state persisting? User ID is ", userId, "username is ", userName);
+
 
   let Greeting = (
     <div className='greeting'></div>
